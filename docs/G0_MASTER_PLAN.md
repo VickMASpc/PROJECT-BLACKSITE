@@ -2,15 +2,11 @@
 
 ## Why G0 exists
 
-The first BLACKSITE implementation attempt spread across too many incomplete ideas at once: companion following, mission nodes, persistence, HUD, endurance, disguise, contextual commands, and future machine hooks.
+The first BLACKSITE implementation attempt spread across too many incomplete ideas at once. That proved some Figura concepts, but it did **not** produce a game worth using.
 
-That proved some Figura concepts, but it did **not** produce a game worth using.
+The current code is **v0.0.1 — technical spike**.
 
-G0 exists to prevent that pattern from repeating.
-
-No new gameplay implementation starts until the project can answer, in writing, what the game is, what Reina is, what the player can do, how scenes work, what the facility is, how adult content escalates, and what one complete mission is supposed to feel like.
-
-The current code is therefore **v0.0.1 — technical spike**.
+G0 exists to design the actual experience before implementation resumes.
 
 ---
 
@@ -22,24 +18,24 @@ Goal: know what BLACKSITE is before building it.
 
 Must lock:
 
+- player taste/desire priorities
 - player role
 - Reina/player history and authority relationship
-- Reina's baseline personality and behavioral boundaries
+- Reina personality and behavioral boundaries
 - core interaction grammar
 - companion autonomy
-- dialogue/reporting system
 - scene escalation grammar
+- device/prop logic
 - humiliation logic
-- persistent-compromise logic
-- S-Machine concept and categories
-- B/D/control-state taxonomy
+- persistent aftermath
+- restraint/control logic
 - facility premise
 - Operation Glasshouse plot
 - first mission pacing
 - technical boundaries imposed by Figura
 - exact acceptance criteria for G1
 
-No feature is "implemented" during G0.
+No gameplay feature is considered implemented during G0.
 
 ---
 
@@ -47,27 +43,22 @@ No feature is "implemented" during G0.
 
 Goal: Reina alone is pleasant to use in a normal Minecraft world.
 
-Nothing from later gates counts if this is weak.
-
 Required:
 
-- actual Reina model, not a block proxy
+- actual Reina model
 - stable WORLD-parented rendering
 - clean first-person behavior
-- believable idle
-- believable walk
-- turning
-- gaze
+- believable idle/walk/turning/gaze
 - FOLLOW
 - WAIT
 - COME HERE
 - MOVE THERE
 - sensible stopping distance
-- stairs/slopes/doorway behavior
+- basic stairs/slopes/doorway behavior
 - local obstacle handling
 - manual recovery
 - no routine snap-teleporting
-- basic interaction targeting
+- interaction targeting
 - development/debug state readout
 - clean animation transitions
 
@@ -87,22 +78,16 @@ Required:
 - compact command UI
 - dialogue presentation
 - response states
-- gaze reactions
-- proximity reactions
-- player-staring awareness where appropriate
+- gaze/proximity reactions
 - simple autonomous reactions
 - persistent local relationship/state facts
-- clear division between what Reina does automatically and what requires an order
-
-Exit test:
-
-A player can communicate with Reina for several minutes in an empty test space and understand what she is thinking/doing without reading debug text.
+- clear division between automatic behavior and ordered behavior
 
 ---
 
 ## G3 — Environment Context
 
-Goal: the world can tell Reina and the player what kind of situation they are in.
+Goal: the world can create situations rather than merely trigger scripts.
 
 Required:
 
@@ -110,15 +95,9 @@ Required:
 - trigger volumes
 - authored scene anchors
 - tagged props/interactables
-- room states
-- cover/disguise contexts
 - witness/publicness context
 - security context
 - reusable condition resolver
-
-Exit test:
-
-Moving Reina through a small test facility causes different valid commands/reactions without hardcoding each interaction directly into the UI.
 
 ---
 
@@ -128,21 +107,19 @@ Goal: one authored scene can be long, reactive, interruptible, and reliable.
 
 Required:
 
-- scene entry
-- position locking/soft positioning
-- camera optionality
+- scene entry/exit
+- positioning
 - dialogue stages
 - animation stages
 - prop attachment
-- command choice
-- conditional branches
+- choice/command branching
+- conditional loops
 - interruption/recovery
-- exit state
 - persistence handoff
 
 Exit test:
 
-A single ten-minute non-explicit test scene can branch, pause, resume, and leave state behind without breaking Reina's placement or controls.
+A single long scene can deepen one premise for many minutes without breaking placement, input, or state.
 
 ---
 
@@ -152,27 +129,20 @@ Goal: what happens in a scene matters after it ends.
 
 Required:
 
-- outfit state
-- equipment state
+- outfit/equipment state
 - posture/movement modifier
-- endurance/strain
-- discomfort
-- composure
+- endurance/strain where relevant
+- body-specific scene state
 - witness memory
-- facility log/evidence state
-- disguise integrity
-- recovery
-- later-context callbacks
-
-Exit test:
-
-A choice made in one room visibly changes Reina, her dialogue, her available actions, or facility behavior several rooms later.
+- facility logs/evidence
+- cleanup/recovery
+- later callbacks
 
 ---
 
 ## G6 — Stealth Game
 
-Goal: BLACKSITE becomes an actual infiltration game.
+Goal: the facility becomes an actual infiltration game.
 
 Required:
 
@@ -185,33 +155,33 @@ Required:
 - disguises
 - access credentials
 - route choice
-- nonlethal failure/recovery states where possible
-
-Exit test:
-
-A small facility floor is enjoyable without any adult content enabled.
 
 ---
 
-## G7 — Adult Systems
+## G7 — Adult Scene Systems
 
-Goal: erotic/humiliating content becomes deep gameplay instead of a gallery.
+Goal: the project can support the actual scenes the player wants.
 
-Required:
+This gate is **not** a fetish taxonomy and does not require equal support for every possible mechanic.
 
-- S-Machine runtime
-- machine endurance/recovery
-- control/restraint states
-- compromised locomotion
-- reporting under pressure
-- public/private/witness context
-- normalization-driven behavior
-- persistent aftermath
-- multiple ways for a scene to escalate without merely increasing physical intensity
+It implements what the approved scenes require.
+
+Likely requirements include:
+
+- internal device/ball state
+- multiple-object tracking
+- difficult extraction/expulsion
+- stuck/slip-back progression
+- bodily control/accident state
+- restraints and positional control where desired
+- machines/devices individually designed around appealing scenes
+- player-controlled technical authority
+- long dialogue/choice escalation
+- persistent erotic aftermath
 
 Exit test:
 
-One adult scenario can sustain meaningful interaction for a long scene using dialogue, procedure, state, choices, and aftermath rather than a stack of unrelated animations.
+At least one adult scenario is genuinely desirable to replay, not merely technically functional.
 
 ---
 
@@ -219,53 +189,36 @@ One adult scenario can sustain meaningful interaction for a long scene using dia
 
 Goal: one polished mission that demonstrates the actual game.
 
-Required:
-
-- authored facility area
-- insertion
-- reconnaissance
-- cover/disguise play
-- one major escalating compromised-state sequence
-- one S-Machine sequence
-- at least one serious plot discovery
-- route variation
-- persistent consequences
-- extraction
-- post-mission state
-
-Exit test:
-
-The mission can be played from start to finish and feels like a coherent obscure-JP-eroge-meets-infiltration game rather than a tech demo.
-
 ---
 
 # G0 work order
 
-We will complete G0 in this order:
-
-1. **Player + Reina relationship**
-2. **Core scene grammar**
-3. **Reina character bible**
-4. **Player interaction grammar**
-5. **Autonomy and refusal/objection rules**
-6. **Facility premise**
-7. **Operation Glasshouse plot**
-8. **Humiliation/context model**
-9. **S-Machine taxonomy**
-10. **B/D/control-state taxonomy**
+1. **Player Desire Bible**
+2. **First flagship erotic scene**
+3. **Reina character bible derived from the scene**
+4. **Commander/Reina relationship**
+5. **Player interaction grammar**
+6. **Autonomy/objection/refusal rules**
+7. **Facility premise**
+8. **Operation Glasshouse plot**
+9. **Additional high-priority scenes**
+10. **Restraint/control logic**
 11. **Persistent consequence model**
-12. **Dialogue/report system**
+12. **Dialogue system**
 13. **Technical architecture**
 14. **G1 exact specification**
 
-The first four are started in \`DESIGN_BIBLE.md\`.
+The first two now exist as:
+
+- \`PLAYER_DESIRE_BIBLE.md\`
+- \`SCENE_01_DEVICE_EXTRACTION.md\`
 
 ---
 
 # Planning rule
 
-Do not solve future problems by implementing placeholders.
+A complete small thing is more valuable than ten technically-present systems.
 
-If a later system is known but not ready, document its contract and leave it unimplemented.
+And for erotic content:
 
-A complete small thing is more valuable than ten "technically present" systems.
+**personal desirability beats abstract design elegance.**
