@@ -126,14 +126,14 @@ function Reina.init(state)
    modelFile = (models.models and models.models.reina) or models.reina
    worldRoot = modelFile.WorldRoot
    root = worldRoot.Root
-   body = root.Body
-   head = root.Head
-   leftArm = root.LeftArm
-   rightArm = root.RightArm
+   body = root.RigBody
+   head = root.RigHead
+   leftArm = root.RigLeftArm
+   rightArm = root.RigRightArm
    leftForearm = leftArm.LeftForearm
    rightForearm = rightArm.RightForearm
-   leftLeg = root.LeftLeg
-   rightLeg = root.RightLeg
+   leftLeg = root.RigLeftLeg
+   rightLeg = root.RigRightLeg
    leftLowerLeg = leftLeg.LeftLowerLeg
    rightLowerLeg = rightLeg.RightLowerLeg
 
