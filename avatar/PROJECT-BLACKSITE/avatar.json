@@ -1,8 +1,13 @@
 {
-  "name": "PROJECT BLACKSITE v0.1",
-  "description": "Operation Glasshouse — story-driven Figura stealth companion prototype",
-  "authors": ["VickMASpc", "OpenAI"],
+  "name": "PROJECT BLACKSITE — G1 Reina",
+  "description": "G1 companion prototype: Reina movement, gaze and direct commands",
+  "authors": [
+    "VickMASpc",
+    "OpenAI"
+  ],
   "version": "0.1.0",
   "color": "8a63ff",
-  "autoScripts": ["script"]
+  "autoScripts": [
+    "script"
+  ]
 }

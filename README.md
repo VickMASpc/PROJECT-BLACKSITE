@@ -1,35 +1,58 @@
 # PROJECT BLACKSITE
 
-A story-driven Figura stealth companion game: serious infiltration, a character-driven commander/subordinate partnership, and increasingly indecent mission logic that is developed through context, dialogue, procedure, humiliation, and persistent aftermath.
+Story-driven adult Figura companion/infiltration project.
 
-## Current status
+## Development status
 
-**v0.0.1 — technical spike only.**
+**G1 — Reina Companion Prototype is now active.**
 
-The existing Lua prototype is not the first real game milestone and should not be treated as accepted design. It tested a few Figura assumptions (WORLD-parented companion, simple state persistence, HUD/keybinds, mission-state scaffolding), but it spread too shallowly across too many systems.
+The earlier mission/HUD/state implementation is retained in the repository as the **v0.0.1 technical spike**, but it is no longer loaded by the active avatar.
 
-Development is paused at **G0 — Design Bible** until the game is properly specified.
+Planning has been intentionally cut off at the point needed to build something real. The minimum locked creative canon is in `docs/CORE_LOCK.md`. The flagship adult target remains `docs/SCENE_01_DEVICE_EXTRACTION.md`.
 
-The next real implementation milestone will be **G1 — Reina Companion Prototype**: one polished, usable companion loop before any mission content is added.
+## Current playable target
 
-## Authoritative planning
+G1 is deliberately narrow: make Reina feel good as a companion in ordinary Minecraft before building story content around her.
 
-Read these first:
+The active avatar now contains:
 
-- \`docs/G0_MASTER_PLAN.md\` — gate structure and what must be designed before code resumes
-- \`docs/DESIGN_BIBLE.md\` — current game canon and scene grammar
-- \`docs/Prison Academia.md\` — unfinished reference transcription that helped define the project's tone and escalation DNA
+- a real hierarchical Reina field model v1
+- world-independent rendering visible in first person
+- idle/walk animation
+- natural-ish gaze
+- FOLLOW / WAIT
+- COME HERE
+- MOVE THERE
+- local ground/obstacle handling
+- manual recovery
+- compact development HUD
 
-Older documents remain useful as idea banks and technical notes, but anything that conflicts with the G0 documents is provisional until reconciled.
+## Install
 
-## Core rule
+Copy:
 
-BLACKSITE is not:
+`avatar/PROJECT-BLACKSITE`
 
-\`player -> menu -> animation\`
+to:
 
-It is:
+`<minecraft directory>/figura/avatars/PROJECT-BLACKSITE`
 
-\`world context -> character understanding -> command/dialogue -> scene escalation -> persistent consequence\`
+Then select **PROJECT BLACKSITE — G1 Reina**.
 
-A good BLACKSITE scene does not end when the sexual or humiliating action ends. It keeps asking what remains true afterward, what became harder, what the characters learned about one another, and how the mission can make the same compromised state matter again.
+## Controls
+
+- **H** — follow / wait
+- **G** — come here
+- **J** — move to crosshair target
+- **R** — recover Reina beside player
+- **K** — toggle G1 HUD
+
+## Testing priority
+
+Do not test story content yet.
+
+Walk around with Reina. Use stairs, slabs, doorways, slopes, cramped interiors, first person, and third person. Try all four movement commands.
+
+If something feels bad, that is the thing we fix next.
+
+See `docs/G1.md` for the actual acceptance criteria.

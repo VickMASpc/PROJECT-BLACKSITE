@@ -1,43 +1,29 @@
-if not host:isHost() then
-   return
-end
+if not host:isHost() then return end
 
-local State = require("blacksite.state")
-local Companion = require("blacksite.companion")
-local Mission = require("blacksite.mission")
-local UI = require("blacksite.ui")
+local State = require("g1.state")
+local Reina = require("g1.reina")
+local Input = require("g1.input")
+local Hud = require("g1.hud")
 
-local booted = false
+local ready = false
 
 local function boot()
-   State.load()
-   State.ensureOrigin()
-
-   Companion.init(State)
-   Mission.init(State, Companion)
-   UI.init(State, Mission, Companion)
-
-   State.message("BLACKSITE 0.1 online. Follow the objective distance and press G.", 160)
-   booted = true
+   State.init()
+   Reina.init(State)
+   Input.init(State, Reina)
+   Hud.init(State, Reina)
+   ready = true
 end
 
 events.tick:register(function()
-   if not player:isLoaded() then
-      return
-   end
-
-   if not booted then
-      boot()
-   end
+   if not player:isLoaded() then return end
+   if not ready then boot() end
 
    State.tick()
-   Companion.tick()
-   Mission.tick()
-   UI.tick()
+   Reina.tick()
+   Hud.tick()
 end)
 
 events.world_render:register(function(delta)
-   if booted then
-      Companion.render(delta)
-   end
+   if ready then Reina.render(delta) end
 end)
