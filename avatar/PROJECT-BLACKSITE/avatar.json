@@ -1,0 +1,8 @@
+{
+  "name": "PROJECT BLACKSITE v0.1",
+  "description": "Operation Glasshouse — story-driven Figura stealth companion prototype",
+  "authors": ["VickMASpc", "OpenAI"],
+  "version": "0.1.0",
+  "color": "8a63ff",
+  "autoScripts": ["script"]
+}
