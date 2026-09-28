@@ -58,34 +58,34 @@ local function groundAt(p)
    return vec(p.x, hit.y, p.z)
 end
 
-local function clearBetween(a, b)
-   -- WORLD raycasts can graze the floor when the endpoints sit exactly on a
-   -- block-top boundary. Treat vertical-face hits as real walls, but ignore
-   -- UP/DOWN face grazing so flat ground does not mark every step BLOCKED.
-   local block, _, side = raycast:block(
-      a + vec(0, 1.05, 0),
-      b + vec(0, 1.05, 0),
-      "COLLIDER",
-      "NONE"
-   )
-
-   if block == nil then
-      return true
-   end
-
-   return side == "UP" or side == "DOWN"
-end
-
 local function validStep(from, candidate)
+   -- Ground probing is enough for local locomotion:
+   -- * flat floor -> same Y, valid
+   -- * slab/stair -> small Y change, valid
+   -- * wall/fence -> probe hits its top, Y change is too high
+   -- * hole -> probe lands too far below
+   --
+   -- The previous horizontal ray was the reason Reina reported WALL on open
+   -- grass, so G1 no longer uses it.
    local grounded = groundAt(candidate)
    if not grounded then return nil, "NO_GROUND" end
 
    local dy = grounded.y - from.y
    if dy > 0.72 then return nil, "STEP_TOO_HIGH" end
    if dy < -1.25 then return nil, "DROP_TOO_FAR" end
-   if not clearBetween(from, grounded) then return nil, "WALL" end
 
    return grounded, nil
+end
+
+local function rotateFlat(dir, degrees)
+   local a = math.rad(degrees)
+   local c = math.cos(a)
+   local s = math.sin(a)
+   return vec(
+      dir.x * c - dir.z * s,
+      0,
+      dir.x * s + dir.z * c
+   )
 end
 
 local function spawnPoint()
@@ -278,15 +278,17 @@ function Reina.tick()
       else
          local dir = horizontal / dist
          local step = math.min(0.155, dist)
-         local candidates = {
-            r.pos + dir * step,
-            r.pos + vec(-dir.z,0,dir.x) * step,
-            r.pos - vec(-dir.z,0,dir.x) * step
-         }
 
+         -- Try the direct route first, then progressively wider steering arcs.
+         -- This is still local steering rather than a full pathfinder, but it
+         -- lets Reina skirt ordinary corners and small holes instead of
+         -- declaring herself blocked on the first failed sample.
+         local steeringAngles = {0, 28, -28, 55, -55, 82, -82, 115, -115}
          local picked = nil
          local lastReason = "NO_VALID_STEP"
-         for _, candidate in ipairs(candidates) do
+
+         for _, angle in ipairs(steeringAngles) do
+            local candidate = r.pos + rotateFlat(dir, angle) * step
             local point, reason = validStep(r.pos, candidate)
             if point then
                picked = point
@@ -310,13 +312,40 @@ function Reina.tick()
       end
    end
 
-   -- When idle and nearby, Reina naturally turns toward the player instead of
-   -- standing like a mannequin.
-   if not r.moving and playerDistance < 5.5 then
+   -- Head-first turning:
+   -- Reina does NOT rotate her whole body every time the player strafes.
+   -- She lets her head track first. If the player stays beyond a comfortable
+   -- neck angle for a short moment, her body turns to catch up.
+   if not r.moving and playerDistance < 6.5 then
       local toPlayer = player:getPos() - r.pos
-      if vec(toPlayer.x,0,toPlayer.z):length() > 0.2 then
-         r.yaw = approachAngle(r.yaw, heading(toPlayer), 5.5)
+      local flatToPlayer = vec(toPlayer.x, 0, toPlayer.z)
+
+      if flatToPlayer:length() > 0.2 then
+         local targetYaw = heading(flatToPlayer)
+         local neckDemand = math.abs(angleDelta(r.yaw, targetYaw))
+
+         if neckDemand > 52 then
+            r.turnIntentTicks = (r.turnIntentTicks or 0) + 1
+         elseif neckDemand < 42 then
+            r.turnIntentTicks = 0
+         end
+
+         if (r.turnIntentTicks or 0) >= 6 then
+            r.bodyTurning = true
+         end
+
+         if r.bodyTurning then
+            r.yaw = approachAngle(r.yaw, targetYaw, 4.2)
+
+            if math.abs(angleDelta(r.yaw, targetYaw)) < 20 then
+               r.bodyTurning = false
+               r.turnIntentTicks = 0
+            end
+         end
       end
+   else
+      r.turnIntentTicks = 0
+      if r.moving then r.bodyTurning = false end
    end
 end
 
@@ -328,7 +357,11 @@ function Reina.render(delta)
    local yaw = r.prevYaw + angleDelta(r.prevYaw, r.yaw) * delta
 
    worldRoot:setPos(pos * 16)
-   worldRoot:setRot(0, yaw, 0)
+
+   -- Figura ModelPart Y rotation runs opposite Minecraft's logical yaw for
+   -- this WORLD rig. Keep r.yaw in normal world/Minecraft coordinates and
+   -- invert only at render time.
+   worldRoot:setRot(0, -yaw, 0)
 
    local phase = r.walkClock
    local swing = r.moving and math.sin(phase) or 0
@@ -354,12 +387,16 @@ function Reina.render(delta)
    local flatDist = vec(toPlayer.x,0,toPlayer.z):length()
 
    if toPlayer:length() < 8 and flatDist > 0.05 then
-      -- ModelPart rotation signs are opposite the intuitive world-space
-      -- direction on both head axes here. Positive X looks down; positive Y
-      -- turns the model the opposite horizontal direction, so invert both.
-      local lookYaw = -angleDelta(yaw, heading(toPlayer))
+      local lookYaw = angleDelta(yaw, heading(toPlayer))
       local lookPitch = math.deg(math.atan2(toPlayer.y, flatDist))
-      head:setRot(clamp(lookPitch, -28, 24), clamp(lookYaw, -52, 52), 0)
+
+      -- The body only starts catching up after this reaches the neck limit,
+      -- so normal side-to-side player movement remains a head turn.
+      head:setRot(
+         clamp(lookPitch, -28, 24),
+         clamp(lookYaw, -58, 58),
+         0
+      )
    else
       head:setRot(0,0,0)
    end

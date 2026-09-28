@@ -18,7 +18,9 @@ State.reina = {
    lost = false,
    lookedAt = false,
    walkClock = 0,
-   speed = 0
+   speed = 0,
+   turnIntentTicks = 0,
+   bodyTurning = false
 }
 
 function State.init()
