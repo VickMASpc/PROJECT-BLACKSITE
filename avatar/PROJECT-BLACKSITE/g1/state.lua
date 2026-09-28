@@ -14,6 +14,7 @@ State.reina = {
    target = nil,
    moving = false,
    blocked = false,
+   blockedReason = "",
    lost = false,
    lookedAt = false,
    walkClock = 0,

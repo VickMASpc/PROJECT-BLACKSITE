@@ -59,22 +59,33 @@ local function groundAt(p)
 end
 
 local function clearBetween(a, b)
-   local block = raycast:block(
-      a + vec(0, 0.95, 0),
-      b + vec(0, 0.95, 0),
+   -- WORLD raycasts can graze the floor when the endpoints sit exactly on a
+   -- block-top boundary. Treat vertical-face hits as real walls, but ignore
+   -- UP/DOWN face grazing so flat ground does not mark every step BLOCKED.
+   local block, _, side = raycast:block(
+      a + vec(0, 1.05, 0),
+      b + vec(0, 1.05, 0),
       "COLLIDER",
       "NONE"
    )
-   return block == nil
+
+   if block == nil then
+      return true
+   end
+
+   return side == "UP" or side == "DOWN"
 end
 
 local function validStep(from, candidate)
    local grounded = groundAt(candidate)
-   if not grounded then return nil end
+   if not grounded then return nil, "NO_GROUND" end
+
    local dy = grounded.y - from.y
-   if dy > 0.72 or dy < -1.25 then return nil end
-   if not clearBetween(from, grounded) then return nil end
-   return grounded
+   if dy > 0.72 then return nil, "STEP_TOO_HIGH" end
+   if dy < -1.25 then return nil, "DROP_TOO_FAR" end
+   if not clearBetween(from, grounded) then return nil, "WALL" end
+
+   return grounded, nil
 end
 
 local function spawnPoint()
@@ -274,12 +285,19 @@ function Reina.tick()
          }
 
          local picked = nil
+         local lastReason = "NO_VALID_STEP"
          for _, candidate in ipairs(candidates) do
-            picked = validStep(r.pos, candidate)
-            if picked then break end
+            local point, reason = validStep(r.pos, candidate)
+            if point then
+               picked = point
+               break
+            end
+            lastReason = reason or lastReason
          end
 
          if picked then
+            r.blockedReason = ""
+
             r.pos = picked
             r.speed = (r.pos - r.prevPos):length()
             r.walkClock = r.walkClock + r.speed * 8.2
@@ -287,6 +305,7 @@ function Reina.tick()
             r.yaw = approachAngle(r.yaw, heading(r.pos - r.prevPos), 13)
          else
             r.blocked = true
+            r.blockedReason = lastReason
          end
       end
    end
@@ -335,8 +354,11 @@ function Reina.render(delta)
    local flatDist = vec(toPlayer.x,0,toPlayer.z):length()
 
    if toPlayer:length() < 8 and flatDist > 0.05 then
-      local lookYaw = angleDelta(yaw, heading(toPlayer))
-      local lookPitch = -math.deg(math.atan2(toPlayer.y, flatDist))
+      -- ModelPart rotation signs are opposite the intuitive world-space
+      -- direction on both head axes here. Positive X looks down; positive Y
+      -- turns the model the opposite horizontal direction, so invert both.
+      local lookYaw = -angleDelta(yaw, heading(toPlayer))
+      local lookPitch = math.deg(math.atan2(toPlayer.y, flatDist))
       head:setRot(clamp(lookPitch, -28, 24), clamp(lookYaw, -52, 52), 0)
    else
       head:setRot(0,0,0)

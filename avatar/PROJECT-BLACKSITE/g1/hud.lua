@@ -25,8 +25,11 @@ function Hud.tick()
 
    local r = State.reina
    local status = r.mode
-   if r.lost then status = status .. " / LOST"
-   elseif r.blocked then status = status .. " / BLOCKED" end
+   if r.lost then
+      status = status .. " / LOST"
+   elseif r.blocked then
+      status = status .. " / BLOCKED:" .. tostring(r.blockedReason or "?")
+   end
 
    local lines = {
       "§5§lBLACKSITE §8// §dG1 REINA",
